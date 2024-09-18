@@ -1,26 +1,16 @@
 import tkinter as tk
 import sys
 from tkinter import ttk, messagebox, simpledialog
+from connect_db import get_user_data, get_booking_data, get_revenue_data
+
+
 
 # Dữ liệu mẫu cho người dùng và đặt phòng
-users_data = [
-    {"username": "guest1", "role": "Guest"},
-    {"username": "guest2", "role": "Guest"},
-    {"username": "admin1", "role": "Admin"},
-    {"username": "admin2", "role": "Admin"},
-]
+users_data = get_user_data()
 
-booking_data = [
-    {"room": "Single Room", "hotel": "Hotel A", "status": "Booked", "price": 50, "region": "Region 1"},
-    {"room": "Double Room", "hotel": "Hotel A", "status": "Pending", "price": 100, "region": "Region 1"},
-    {"room": "Suite", "hotel": "Hotel C", "status": "Booked", "price": 300, "region": "Region 2"},
-]
+booking_data = get_booking_data()
 
-revenue_data = {
-    "Room Stats": {"Single Room": 10, "Double Room": 7, "Suite": 3},
-    "Region Revenue": {"Region 1": 1000, "Region 2": 800},
-    "Hotel Revenue": {"Hotel A": 1200, "Hotel C": 600}
-}
+revenue_data = get_revenue_data()
 
 regions_data = []  # Dữ liệu khu vực
 hotels_data = {}   # Dữ liệu khách sạn theo khu vực
@@ -151,7 +141,23 @@ def admin_interface(username):
     room_label = tk.Label(left_frame, text="Loại phòng được đặt nhiều nhất:", font=("Helvetica", 14), bg="#ECF0F1")
     room_label.pack(anchor="w")
 
-    room_value = tk.Label(left_frame, text=max(revenue_data["Room Stats"], key=revenue_data["Room Stats"].get), font=("Helvetica", 14, "bold"), fg="#2C3E50", bg="#ECF0F1")
+    # Kiểm tra nếu "Room Stats" có dữ liệu trước khi sử dụng max()
+    if revenue_data.get("Room Stats"):
+        room_value = tk.Label(
+            left_frame, 
+            text=max(revenue_data["Room Stats"], key=revenue_data["Room Stats"].get), 
+            font=("Helvetica", 14, "bold"), 
+            fg="#2C3E50", 
+            bg="#ECF0F1"
+        )
+    else:
+        room_value = tk.Label(
+            left_frame, 
+            text="No Room Stats available",  # Hiển thị thông báo nếu không có dữ liệu
+            font=("Helvetica", 14, "bold"), 
+            fg="#2C3E50", 
+            bg="#ECF0F1"
+        )
     room_value.pack(anchor="w")
 
     tk.Label(left_frame, text="Thống kê theo loại phòng:", font=("Helvetica", 12, "bold"), bg="#ECF0F1").pack(pady=10)
